@@ -1,0 +1,275 @@
+C51 COMPILER V9.60.0.0   FINAL                                                             07/27/2022 02:44:19 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE FINAL
+OBJECT MODULE PLACED IN .\Objects\final.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE final.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\fin
+                    -al.lst) TABS(2) OBJECT(.\Objects\final.obj)
+
+line level    source
+
+   1          
+   2          #include<reg51.h>
+   3          
+   4          
+   5            sbit rs=P2^0;
+   6            sbit en=P2^1;
+   7            sbit fan=P2^2;
+   8            sbit bulb=P2^3;
+   9            sbit led=P2^4;
+  10            sbit buzzer=P3^2;
+  11          
+  12            unsigned int i;
+  13            unsigned char a[100];
+  14            sfr ldata=0x90;//port1 
+  15            unsigned char input;
+  16          
+  17            void delay(unsigned int i);
+  18            void lcd_cmd(unsigned char a);
+  19            void lcd_data(unsigned char b);
+  20            void lcd_init(void);
+  21            void lcd_str(unsigned char *str);
+  22            void clear(void);
+  23          
+  24          
+  25          
+  26          void main()
+  27          {
+  28   1      
+  29   1      
+  30   1        
+  31   1        SCON = 0x50;
+  32   1        TMOD = 0x20;
+  33   1        TH1 = -3;
+  34   1        TR1=1;
+  35   1        buzzer=1;
+  36   1        lcd_init();
+  37   1       
+  38   1        
+  39   1        while(1)
+  40   1        {
+  41   2              while(RI == 0);
+  42   2              input=SBUF;
+  43   2              SBUF=input;
+  44   2              while(TI == 0);
+  45   2              TI = 0;
+  46   2              RI=0;
+  47   2          
+  48   2          
+  49   2                lcd_cmd(0x01);
+  50   2                lcd_cmd(0x80);
+  51   2                lcd_str(" Invalid ");
+  52   2                lcd_cmd(0xc0);
+  53   2                lcd_str("  Input  ");
+  54   2        
+C51 COMPILER V9.60.0.0   FINAL                                                             07/27/2022 02:44:19 PAGE 2   
+
+  55   2        
+  56   2              if(input== '1')
+  57   2              {
+  58   3                
+  59   3                  lcd_cmd(0x01);
+  60   3                  lcd_cmd(0x80);
+  61   3                  lcd_str(" FAN is OFF ");
+  62   3                  lcd_cmd(0xc0);
+  63   3                   fan=1;          //fan off
+  64   3                  delay(65000);
+  65   3                  clear();
+  66   3                 buzzer=1;
+  67   3              }
+  68   2               if(input == '2')
+  69   2              {
+  70   3                  lcd_cmd(0x01);
+  71   3                  fan=0;          //fan on
+  72   3                  lcd_cmd(0x80);
+  73   3                  lcd_str(" FAN is ONN ");
+  74   3                  lcd_cmd(0xc0);
+  75   3                  delay(65000);
+  76   3                  clear();
+  77   3                  buzzer=0;
+  78   3                 delay(65000);
+  79   3                  buzzer=1;
+  80   3              }
+  81   2              
+  82   2              
+  83   2              //now for bulb
+  84   2               if(input == '3')
+  85   2              {
+  86   3                  // bulb=1;          //bulb off
+  87   3                
+  88   3                  lcd_cmd(0x01);
+  89   3                  lcd_cmd(0x80);
+  90   3                  lcd_str(" BULB is OFF ");
+  91   3                  lcd_cmd(0xc0);
+  92   3                   bulb=1;          //bulb off
+  93   3                  //lcd_str(a);
+  94   3                  delay(65000);
+  95   3                  clear();
+  96   3                buzzer=1;
+  97   3              }
+  98   2               if(input== '4')
+  99   2              {
+ 100   3                   bulb=0;        //bulb on
+ 101   3                
+ 102   3                 lcd_cmd(0x01);
+ 103   3                  lcd_cmd(0x80);
+ 104   3                  lcd_str(" BULB is on ");
+ 105   3                  lcd_cmd(0xc0);
+ 106   3                   bulb=0;         // bulb on
+ 107   3                  //lcd_str(a);
+ 108   3                  delay(65000);
+ 109   3                  buzzer=0;
+ 110   3                  delay(65000);
+ 111   3                  buzzer=1;
+ 112   3              
+ 113   3              }
+ 114   2              
+ 115   2              //now for led
+ 116   2               if(input == '5')
+C51 COMPILER V9.60.0.0   FINAL                                                             07/27/2022 02:44:19 PAGE 3   
+
+ 117   2              {
+ 118   3                 // led=1;          //led off
+ 119   3                
+ 120   3                  lcd_cmd(0x01);
+ 121   3                  lcd_cmd(0x80);
+ 122   3                  lcd_str(" led is OFF ");
+ 123   3                  lcd_cmd(0xc0);
+ 124   3                   led=1;         // led off
+ 125   3                  delay(65000);
+ 126   3                buzzer=1;
+ 127   3              }
+ 128   2               if(input== '6')
+ 129   2              {
+ 130   3                   //led=0;        //led on
+ 131   3                 lcd_cmd(0x01);
+ 132   3                  lcd_cmd(0x80);
+ 133   3                  lcd_str(" led is on ");
+ 134   3                  lcd_cmd(0xc0);
+ 135   3                   led=0;         // led on
+ 136   3                  delay(65000);
+ 137   3                  buzzer=0;
+ 138   3                  delay(65000);
+ 139   3                  buzzer=1;
+ 140   3              }
+ 141   2              
+ 142   2              
+ 143   2               if(input == '0')
+ 144   2               {
+ 145   3                 
+ 146   3                  lcd_cmd(0x01);
+ 147   3                  lcd_cmd(0x80);
+ 148   3                  lcd_str(" ALL is ON ");
+ 149   3                  lcd_cmd(0xc0);
+ 150   3                  fan=bulb=led=0;  // all r on
+ 151   3                  delay(65000);
+ 152   3                  buzzer=0;
+ 153   3                  delay(65000);
+ 154   3                  buzzer=1;
+ 155   3                 
+ 156   3                 
+ 157   3              //   fan=bulb=led=0;  // all r off
+ 158   3               }
+ 159   2                if(input == '9')
+ 160   2               {
+ 161   3                  lcd_cmd(0x01);
+ 162   3                  lcd_cmd(0x80);
+ 163   3                  lcd_str(" ALL is off ");
+ 164   3                  lcd_cmd(0xc0);
+ 165   3                  fan=bulb=led=1;  // all r off
+ 166   3                  delay(65000);
+ 167   3                 buzzer=1;
+ 168   3                 
+ 169   3                 
+ 170   3                 
+ 171   3                 
+ 172   3               }
+ 173   2          
+ 174   2        } 
+ 175   1        
+ 176   1      }
+ 177          
+ 178          
+C51 COMPILER V9.60.0.0   FINAL                                                             07/27/2022 02:44:19 PAGE 4   
+
+ 179          //program for lcd_init
+ 180          
+ 181          void lcd_init()
+ 182          {
+ 183   1       lcd_cmd(0x38);
+ 184   1        lcd_cmd(0x0c);
+ 185   1        lcd_cmd(0x01);
+ 186   1        lcd_cmd(0x80);
+ 187   1      
+ 188   1      
+ 189   1      }
+ 190          
+ 191          //program for delay
+ 192          void delay(unsigned int i)
+ 193          {
+ 194   1      unsigned int j;
+ 195   1        for(j=0;j<i;j++);
+ 196   1      }
+ 197          
+ 198          
+ 199          //program for lcd_cmd
+ 200          void lcd_cmd(unsigned char a)
+ 201          {
+ 202   1        rs=0;//cmd 
+ 203   1        ldata=a;
+ 204   1        en=1;
+ 205   1        delay(5);
+ 206   1        en=0;
+ 207   1        delay(5);
+ 208   1      }
+ 209          //progeam for lcd_data
+ 210          void lcd_data(unsigned char b)
+ 211          {
+ 212   1        rs=1;//data 
+ 213   1        ldata=b;
+ 214   1        en=1;
+ 215   1        delay(5);
+ 216   1        en=0;
+ 217   1        delay(5);
+ 218   1      }
+ 219          //program for lec_str
+ 220          void lcd_str(unsigned char *str)
+ 221          {
+ 222   1      while(*str)
+ 223   1      {
+ 224   2        lcd_data(*str++);
+ 225   2      }
+ 226   1      
+ 227   1      }
+ 228          
+ 229          
+ 230          
+ 231          
+ 232          //program for clear the lcd
+ 233          void clear(void)
+ 234          {
+ 235   1      
+ 236   1      unsigned int i;
+ 237   1        for(i=0;i<100;i++)
+ 238   1        {
+ 239   2        a[i]='\0';
+ 240   2        
+C51 COMPILER V9.60.0.0   FINAL                                                             07/27/2022 02:44:19 PAGE 5   
+
+ 241   2        }
+ 242   1      }
+ 243          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    526    ----
+   CONSTANT SIZE    =    123    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =    103       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

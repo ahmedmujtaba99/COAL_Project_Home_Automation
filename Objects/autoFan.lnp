@@ -1,0 +1,3 @@
+".\Objects\final.obj" 
+TO ".\Objects\autoFan" 
+PRINT(".\Listings\autoFan.m51")
