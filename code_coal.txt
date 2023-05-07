@@ -1,0 +1,138 @@
+
+
+#include<reg51.h>
+//#include<intrins.h>
+//#include<globals.h>
+
+//#include "LiquidCrystal.h"          //Library of lcd
+//LiquidCrystal lcd(13,12,11,10,9,8); //pin of lcd
+
+
+/*
+void setup() 
+{
+  Serial.begin(9600);  // buart rate
+  lcd.begin(16,2);  
+  lcd.setCursor(0,0);
+  lcd.print("Home Automation ");
+  pinMode(7,OUTPUT); // RELAY MODULE
+    pinMode(6,OUTPUT); //LED
+
+}
+*/
+
+/*
+sbit rs=P1^0;
+sbit en=P1^2;
+void disp(unsigned char *);
+void enable();
+
+*/
+
+sbit fan=P1^0;
+sbit bulb=P1^1;
+sbit television=P1^2;
+sbit machine=P1^3;
+
+void main()
+{
+	unsigned char input;
+	SCON = 0x50;
+	TMOD = 0x20;
+	TH1 = -3;
+	TR1=1;
+	while(1)
+	{
+				while(RI == 0);
+				input=SBUF;
+				SBUF=input;
+				while(TI == 0);
+				TI = 0;
+		    RI=0;
+		    if(input== '1')
+				{
+					   fan=1;          //load1 off
+					/*
+							Serial.println("Bulb OFF");
+       lcd.setCursor(0,1);
+       lcd.print("    Bulb OFF        ");
+			
+					*/
+					//disp("Fan is off");
+			
+				}
+				 if(input == '2')
+				{
+					   fan=0;        //load1 on
+						/*
+					 Serial.println("Bulb ON       ");
+        lcd.setCursor(0,1);
+        lcd.print("    Bulb ON        ");
+					*/
+						//disp("Fan is onn");
+				}
+				
+				
+				//now for load2
+				 if(input == '3')
+				{
+					   bulb=1;          //load2 off
+					//Serial.println("led OFF");
+				}
+				 if(input== '4')
+				{
+					   bulb=0;        //load2 on
+					//Serial.println("led ON       ");
+				}
+				
+				//now for load3
+				 if(input == '5')
+				{
+					   television=1;          //load3 off
+				}
+				 if(input== '6')
+				{
+					   television=0;        //load3 on
+				}
+				
+					//now for load4
+				 if(input== '7')
+				{
+					   machine=1;          //load4 off
+				}
+				 if(input == '8')
+				{
+					   machine=0;        //load4 on
+				}
+		     if(input == '0')
+				 {
+					 fan=bulb=television=machine=0;  // all r on
+				 }
+				  if(input == '9')
+				 {
+					 fan=bulb=television=machine=1;  // all r of
+				 }
+		
+	}	
+	
+}
+
+
+/*
+void disp(unsigned char *s)
+{
+	unsigned char s3;
+	for(s3=0;s[s3]!='\0';s3++)
+	{
+		P3=s[s3];
+		rs=1;
+		enable();
+	}
+}	
+	void enable()
+{
+	unsigned int s2;
+	en=1;
+	for(s2=0;s2<2000;s2++);
+	en=0;
+}
